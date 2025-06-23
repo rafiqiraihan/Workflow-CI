@@ -53,6 +53,7 @@ jobs:
       run: pip install joblib
 
     - name: Commit & Push trained model
+      working-directory: MLProject
       run: |
         cp model.pkl model-$(date +%Y%m%d%H%M%S).pkl
         git config --global user.name "github-actions[bot]"
