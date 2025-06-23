@@ -1,38 +1,26 @@
-# File: MLProject/modelling.py
-import argparse
-import pandas as pd
 import mlflow
-import joblib
+import mlflow.sklearn
+import pandas as pd
+import numpy as np
+import argparse
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+import warnings
+import os
 
-def main():
-    # Ambil parameter dari MLflow Project
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--n_estimators", type=int, default=300)
-    parser.add_argument("--max_depth", type=int, default=3)
-    parser.add_argument("--learning_rate", type=float, default=0.01)
-    parser.add_argument("--subsample", type=float, default=0.6)
-    parser.add_argument("--colsample_bytree", type=float, default=1.0)
-    parser.add_argument("--min_child_weight", type=int, default=5)
-    parser.add_argument("--gamma", type=float, default=0)
-    parser.add_argument("--scale_pos_weight", type=float, default=2.77)
-    parser.add_argument("--dataset", type=str, default="telco_preprocessing.csv")
-    args = parser.parse_args()
+warnings.filterwarnings("ignore")
 
+def train_and_log_model(args):
     # Load dataset
     data = pd.read_csv(args.dataset)
     X = data.drop("is_churn", axis=1)
     y = data["is_churn"]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    input_example = X_train.iloc[:5]
 
     with mlflow.start_run():
-        mlflow.log_params(vars(args))
-
         model = XGBClassifier(
             n_estimators=args.n_estimators,
             max_depth=args.max_depth,
@@ -51,17 +39,40 @@ def main():
         y_pred = model.predict(X_test)
 
         acc = accuracy_score(y_test, y_pred)
-        prec = precision_score(y_test, y_pred)
-        rec = recall_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
 
+        # Log params manually
+        mlflow.log_param("n_estimators", args.n_estimators)
+        mlflow.log_param("max_depth", args.max_depth)
+        mlflow.log_param("learning_rate", args.learning_rate)
+        mlflow.log_param("subsample", args.subsample)
+        mlflow.log_param("colsample_bytree", args.colsample_bytree)
+        mlflow.log_param("min_child_weight", args.min_child_weight)
+        mlflow.log_param("gamma", args.gamma)
+        mlflow.log_param("scale_pos_weight", args.scale_pos_weight)
+
+        # Log metrics
         mlflow.log_metric("accuracy", acc)
-        mlflow.log_metric("precision", prec)
-        mlflow.log_metric("recall", rec)
+        mlflow.log_metric("precision", precision)
+        mlflow.log_metric("recall", recall)
         mlflow.log_metric("f1_score", f1)
 
-        joblib.dump(model, "model.pkl")
-        mlflow.log_artifact("model.pkl")
+        # Log model artifact
+        mlflow.sklearn.log_model(model, "model", input_example=input_example)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--n_estimators", type=int, default=300)
+    parser.add_argument("--max_depth", type=int, default=3)
+    parser.add_argument("--learning_rate", type=float, default=0.01)
+    parser.add_argument("--subsample", type=float, default=0.6)
+    parser.add_argument("--colsample_bytree", type=float, default=1.0)
+    parser.add_argument("--min_child_weight", type=int, default=5)
+    parser.add_argument("--gamma", type=float, default=0)
+    parser.add_argument("--scale_pos_weight", type=float, default=2.77)
+    parser.add_argument("--dataset", type=str, default="telco_preprocessing.csv")
+    args = parser.parse_args()
+
+    train_and_log_model(args)
