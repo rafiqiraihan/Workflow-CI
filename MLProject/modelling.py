@@ -50,7 +50,7 @@ def train_and_log_model(args):
         mlflow.log_param("subsample", args.subsample)
         mlflow.log_param("colsample_bytree", args.colsample_bytree)
         mlflow.log_param("min_child_weight", args.min_child_weight)
-        mlflow.log_param("gamma", args.gamma)
+        mlflow.log_param("gamma", str(args.gamma))
         mlflow.log_param("scale_pos_weight", args.scale_pos_weight)
 
         # Log metrics
