@@ -51,6 +51,7 @@ def train_and_log_model(args):
 
         # Log model artifact
         mlflow.sklearn.log_model(model, "model", input_example=input_example)
+        joblib.dump(model, "model.pkl")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
