@@ -3,6 +3,7 @@ import mlflow.sklearn
 import pandas as pd
 import numpy as np
 import argparse
+from joblib import dump
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
