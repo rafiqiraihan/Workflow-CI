@@ -20,7 +20,7 @@ def train_and_log_model(args):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     input_example = X_train.iloc[:5]
 
-    with mlflow.start_run(nested=True):
+    with mlflow.start_run():
         model = XGBClassifier(
             n_estimators=args.n_estimators,
             max_depth=args.max_depth,
@@ -42,16 +42,6 @@ def train_and_log_model(args):
         precision = precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
-
-        # Log params manually
-        mlflow.log_param("n_estimators", args.n_estimators)
-        mlflow.log_param("max_depth", args.max_depth)
-        mlflow.log_param("learning_rate", args.learning_rate)
-        mlflow.log_param("subsample", args.subsample)
-        mlflow.log_param("colsample_bytree", args.colsample_bytree)
-        mlflow.log_param("min_child_weight", args.min_child_weight)
-        mlflow.log_param("gamma", str(args.gamma))
-        mlflow.log_param("scale_pos_weight", args.scale_pos_weight)
 
         # Log metrics
         mlflow.log_metric("accuracy", acc)
