@@ -15,13 +15,13 @@ entry_points:
       scale_pos_weight: {type: float, default: 2.77}
       dataset: {type: str, default: "telco_preprocessing.csv"}
     command: >
-      python modelling.py
-        --n_estimators {n_estimators}
-        --max_depth {max_depth}
-        --learning_rate {learning_rate}
-        --subsample {subsample}
-        --colsample_bytree {colsample_bytree}
-        --min_child_weight {min_child_weight}
-        --gamma {gamma}
-        --scale_pos_weight {scale_pos_weight}
+      python modelling.py \
+        --n_estimators {n_estimators} \
+        --max_depth {max_depth} \
+        --learning_rate {learning_rate} \
+        --subsample {subsample} \
+        --colsample_bytree {colsample_bytree} \
+        --min_child_weight {min_child_weight} \
+        --gamma {gamma} \
+        --scale_pos_weight {scale_pos_weight} \
         --dataset {dataset}
