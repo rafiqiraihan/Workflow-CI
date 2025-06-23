@@ -1,0 +1,52 @@
+name: Train ML Model
+
+on:
+  push:
+    paths:
+      - MLProject/**
+  workflow_dispatch:
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Run actions/checkout@v3
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.12.7
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12.7
+
+    - name: Check Env
+      run: |
+        python --version
+        pip --version
+
+    - name: Install dependencies
+      working-directory: MLProject
+      run: |
+        pip install -r requirements.txt
+
+    - name: Set MLflow Tracking URI
+      run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
+
+    - name: Run mlflow project
+      working-directory: MLProject
+      run: |
+        mlflow run . -P n_estimators=300 -P max_depth=3 -P learning_rate=0.01 \
+          -P subsample=0.6 -P colsample_bytree=1.0 -P min_child_weight=5 \
+          -P gamma=0 -P scale_pos_weight=2.77 -P dataset=telco_preprocessing.csv
+          
+    - name: Install Python dependencies
+      run: pip install joblib
+
+    - name: Upload to GitHub repo
+      run: |
+        cp MLProject/model.pkl model-$(date +%Y%m%d%H%M%S).pkl
+        git config --global user.email "ci@github.com"
+        git config --global user.name "GitHub CI"
+        git add model-*.pkl
+        git commit -m "Auto-upload trained model from CI"
+        git push
