@@ -52,12 +52,14 @@ jobs:
     - name: Install Python dependencies
       run: pip install joblib
 
-    - name: Upload to GitHub repo
-      working-directory: MLProject
+    - name: Commit & Push trained model
       run: |
         cp model.pkl model-$(date +%Y%m%d%H%M%S).pkl
-        git config --global user.email "ci@github.com"
-        git config --global user.name "GitHub CI"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add model-*.pkl
         git commit -m "Auto-upload trained model from CI"
-        git push
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
