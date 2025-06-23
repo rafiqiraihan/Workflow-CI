@@ -35,9 +35,17 @@ jobs:
     - name: Run mlflow project
       working-directory: MLProject
       run: |
-        mlflow run . -P n_estimators=300 -P max_depth=3 -P learning_rate=0.01 \
-          -P subsample=0.6 -P colsample_bytree=1.0 -P min_child_weight=5 \
-          -P gamma=0 -P scale_pos_weight=2.77 -P dataset=telco_preprocessing.csv
+        mlflow run . \
+          -P n_estimators=300 \
+          -P max_depth=3 \
+          -P learning_rate=0.01 \
+          -P subsample=0.6 \
+          -P colsample_bytree=1.0 \
+          -P min_child_weight=5 \
+          -P gamma=0 \
+          -P scale_pos_weight=2.77 \
+          -P dataset=telco_preprocessing.csv \
+          --env-manager=local
           
     - name: Install Python dependencies
       run: pip install joblib
