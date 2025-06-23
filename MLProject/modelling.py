@@ -20,7 +20,7 @@ def train_and_log_model(args):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     input_example = X_train.iloc[:5]
 
-    with mlflow.start_run():
+    with mlflow.start_run(nested=True):
         model = XGBClassifier(
             n_estimators=args.n_estimators,
             max_depth=args.max_depth,
