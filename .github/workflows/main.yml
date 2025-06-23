@@ -2,9 +2,11 @@ name: Train ML Model
 
 on:
   push:
-    paths:
-      - MLProject/**
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   train-model:
