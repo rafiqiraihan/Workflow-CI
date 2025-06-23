@@ -1,0 +1,27 @@
+name: telco_churn_project
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      n_estimators: {type: int, default: 300}
+      max_depth: {type: int, default: 3}
+      learning_rate: {type: float, default: 0.01}
+      subsample: {type: float, default: 0.6}
+      colsample_bytree: {type: float, default: 1.0}
+      min_child_weight: {type: int, default: 5}
+      gamma: {type: float, default: 0}
+      scale_pos_weight: {type: float, default: 2.77}
+      dataset: {type: str, default: "telco_preprocessing.csv"}
+    command: >
+      python modelling.py
+        --n_estimators {n_estimators}
+        --max_depth {max_depth}
+        --learning_rate {learning_rate}
+        --subsample {subsample}
+        --colsample_bytree {colsample_bytree}
+        --min_child_weight {min_child_weight}
+        --gamma {gamma}
+        --scale_pos_weight {scale_pos_weight}
+        --dataset {dataset}
